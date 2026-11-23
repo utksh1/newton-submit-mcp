@@ -59,20 +59,10 @@ Generic stdio configuration:
 }
 ```
 
-Hermes Agent:
-
-```bash
-printf 'Y\n' | hermes mcp add newton-submit \
-  --command "$(command -v node)" \
-  --args "/absolute/path/to/newton-submit-mcp/build/index.js" \
-  --connect-timeout 60
-
-hermes mcp list
-hermes mcp test newton-submit
-```
-
-Restart the agent (or run `/reload-mcp` in an open Hermes session) to load the
-tools, which are exposed with the prefix `mcp_newton_submit_*`.
+Some MCP clients use a different registration command; consult your client's
+documentation. Point it at `build/index.js` using an absolute path, then restart
+the client so it discovers the tools. Tool names may be prefixed with the
+configured server name.
 
 ## Tools
 

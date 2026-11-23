@@ -39,19 +39,23 @@ Do not edit `build/index.js` directly — it is regenerated from `src/index.ts`.
 - Every API call uses `Authorization: Bearer <token>`.
 - Verify a token with `GET /api/v1/user/me/` — HTTP 200 and a profile means it works.
 
-Host wiring (Hermes Agent):
+Host wiring:
 
-```bash
-printf 'Y\n' | hermes mcp add newton-submit \
-  --command "$(command -v node)" \
-  --args "/absolute/path/to/build/index.js" \
-  --connect-timeout 60
-hermes mcp list && hermes mcp test newton-submit
+Add a stdio server entry to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "newton-submit": {
+      "command": "node",
+      "args": ["/absolute/path/to/build/index.js"]
+    }
+  }
+}
 ```
 
-The `Y` is required: `hermes mcp add` prompts `Enable all N tools?` and silently
-cancels without it. New sessions (or `/reload-mcp`) get tools named
-`mcp_newton_submit_*`. Servers live under `mcp_servers:` in `~/.hermes/config.yaml`.
+Use an absolute path to `build/index.js`. Restart the client to load the tools;
+some hosts prefix tool names with the configured server name.
 
 ## 3. Repository and course discovery
 
@@ -190,8 +194,8 @@ Reference implementations (outside this repo, in the scratch workspace):
    URL, calls `fetch`, and returns `{ content: [{ type: 'text', text }] }`.
 3. Return `isError: true` with the error message on failure; never throw raw
    token-bearing URLs.
-4. Rebuild with `npm run build` and re-test via
-   `hermes mcp test newton-submit` or a stdio JSON-RPC `tools/call` request.
+4. Rebuild with `npm run build` and re-test with a stdio JSON-RPC `tools/call`
+   request, for example `get_user_info`.
 
 ## 9. Style and safety
 
